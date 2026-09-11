@@ -124,10 +124,37 @@ class TestParseArguments(unittest.TestCase):
         self.assertEqual(args.length, 24)
         self.assertEqual(args.count, 3)
 
+    def test_rejects_disabling_all_character_types(self) -> None:
+        with (
+            patch("sys.stderr"),
+            self.assertRaises(SystemExit),
+        ):
+            parse_arguments(
+                [
+                    "--no-lowercase",
+                    "--no-uppercase",
+                    "--no-digits",
+                    "--no-symbols",
+                ]
+            )
+
     def test_accepts_exclude_ambiguous(self) -> None:
         args = parse_arguments(["--exclude-ambiguous"])
 
         self.assertTrue(args.exclude_ambiguous)
+
+    def test_accepts_character_type_options(self) -> None:
+        args = parse_arguments(
+            [
+                "--no-uppercase",
+                "--no-symbols",
+            ]
+        )
+
+        self.assertFalse(args.no_lowercase)
+        self.assertTrue(args.no_uppercase)
+        self.assertFalse(args.no_digits)
+        self.assertTrue(args.no_symbols)
 
     def test_omitted_options_are_none(self) -> None:
         args = parse_arguments([])
@@ -135,6 +162,11 @@ class TestParseArguments(unittest.TestCase):
         self.assertIsNone(args.length)
         self.assertIsNone(args.count)
         self.assertFalse(args.exclude_ambiguous)
+
+        self.assertFalse(args.no_lowercase)
+        self.assertFalse(args.no_uppercase)
+        self.assertFalse(args.no_digits)
+        self.assertFalse(args.no_symbols)
 
     def test_rejects_short_length(self) -> None:
         with (
@@ -497,6 +529,38 @@ class TestMain(unittest.TestCase):
             True,
             True,
             True,
+            True,
+        )
+
+    def test_uses_command_line_character_options(self) -> None:
+        with (
+            patch("builtins.input") as mock_input,
+            patch(
+                "main.generate_password",
+                return_value="test123password",
+            ) as mock_generate,
+            patch("builtins.print"),
+        ):
+            main(
+                [
+                    "--length",
+                    "24",
+                    "--count",
+                    "1",
+                    "--no-uppercase",
+                    "--no-symbols",
+                    "--exclude-ambiguous",
+                ]
+            )
+
+        mock_input.assert_not_called()
+
+        mock_generate.assert_called_once_with(
+            24,
+            True,
+            False,
+            True,
+            False,
             True,
         )
 

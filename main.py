@@ -36,6 +36,30 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         help="Exclude ambiguous characters (0, O, 1, l, I).",
     )
 
+    parser.add_argument(
+        "--no-lowercase",
+        action="store_true",
+        help="Exclude lowercase letters.",
+    )
+
+    parser.add_argument(
+        "--no-uppercase",
+        action="store_true",
+        help="Exclude uppercase letters.",
+    )
+
+    parser.add_argument(
+        "--no-digits",
+        action="store_true",
+        help="Exclude digits.",
+    )
+
+    parser.add_argument(
+        "--no-symbols",
+        action="store_true",
+        help="Exclude symbols.",
+    )
+
     args = parser.parse_args(argv)
 
     if args.length is not None and args.length < MIN_LENGTH:
@@ -43,6 +67,16 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
 
     if args.count is not None and not 1 <= args.count <= MAX_PASSWORD_COUNT:
         parser.error(f"--count must be between 1 and {MAX_PASSWORD_COUNT}.")
+
+    if all(
+        (
+            args.no_lowercase,
+            args.no_uppercase,
+            args.no_digits,
+            args.no_symbols,
+        )
+    ):
+        parser.error("At least one character type must be enabled.")
 
     return args
 
@@ -224,12 +258,27 @@ def main(argv: list[str] | None = None) -> None:
 
     password_count = args.count if args.count is not None else get_password_count()
 
-    (
-        include_lowercase,
-        include_uppercase,
-        include_digits,
-        include_symbols,
-    ) = get_character_options()
+    character_options_from_cli = any(
+        (
+            args.no_lowercase,
+            args.no_uppercase,
+            args.no_digits,
+            args.no_symbols,
+        )
+    )
+
+    if character_options_from_cli:
+        include_lowercase = not args.no_lowercase
+        include_uppercase = not args.no_uppercase
+        include_digits = not args.no_digits
+        include_symbols = not args.no_symbols
+    else:
+        (
+            include_lowercase,
+            include_uppercase,
+            include_digits,
+            include_symbols,
+        ) = get_character_options()
 
     exclude_ambiguous = (
         True
