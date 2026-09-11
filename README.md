@@ -4,17 +4,22 @@ A simple and secure password generator written in Python.
 
 ## Features
 
-- Generates a 20-character password
 - Uses cryptographically secure randomness with `secrets`
-- Includes lowercase letters
-- Includes uppercase letters
-- Includes digits
-- Includes punctuation symbols
-- Ensures at least:
-  - 1 lowercase letter
-  - 1 uppercase letter
-  - 3 digits
-  - 1 symbol
+- Configurable password length
+- Default password length: 20 characters
+- Minimum password length: 15 characters
+- Selectable character types:
+  - Lowercase letters
+  - Uppercase letters
+  - Digits
+  - Symbols
+- All character types are enabled by default
+- Prevents all character types from being disabled
+- Ensures selected character requirements are satisfied
+- Requires at least 3 digits when digits are enabled
+- Validates user input
+- Includes automated tests using Python's `unittest`
+- No third-party packages are required
 
 ## Requirements
 
@@ -40,11 +45,31 @@ Run the program:
 python main.py
 ```
 
-Example output:
-```bash
->wc.lF~=2G.C%)m>q38W
+Example:
+
+```text
+Password length [20]: 24
+
+Character options:
+Include lowercase letters? [Y/n]:
+Include uppercase letters? [Y/n]:
+Include digits? [Y/n]:
+Include symbols? [Y/n]:
+
+Password: 8f]T2q!xL7@pK4nZ3#sW
 ```
-Each execution generates a new password.
+
+Press Enter to use the default password length and enable a character type by default.
+
+## Testing
+
+Run the automated test suite with:
+
+```bash
+python -m unittest -v
+```
+
+The tests cover password generation, validation, configurable character types, password length handling, and invalid user input.
 
 ## Security
 

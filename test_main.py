@@ -1,3 +1,4 @@
+import string
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -5,51 +6,13 @@ from main import (
     ALPHABET,
     DEFAULT_LENGTH,
     MIN_LENGTH,
+    build_alphabet,
     generate_password,
+    get_character_options,
     get_password_length,
+    get_yes_no,
     is_valid_password,
 )
-
-
-class TestIsValidPassword(unittest.TestCase):
-    def test_valid_password(self) -> None:
-        self.assertTrue(is_valid_password("abcABC123!"))
-
-    def test_missing_lowercase(self) -> None:
-        self.assertFalse(is_valid_password("ABCXYZ123!"))
-
-    def test_missing_uppercase(self) -> None:
-        self.assertFalse(is_valid_password("abcxyz123!"))
-
-    def test_missing_digits(self) -> None:
-        self.assertFalse(is_valid_password("abcABCxyz!"))
-
-    def test_fewer_than_three_digits(self) -> None:
-        self.assertFalse(is_valid_password("abcABC12!"))
-
-    def test_missing_symbol(self) -> None:
-        self.assertFalse(is_valid_password("abcABC123"))
-
-
-class TestGeneratePassword(unittest.TestCase):
-    def test_generates_requested_length(self) -> None:
-        for length in (MIN_LENGTH, DEFAULT_LENGTH, 32):
-            with self.subTest(length=length):
-                password = generate_password(length)
-
-                self.assertEqual(len(password), length)
-
-    def test_generates_valid_password(self) -> None:
-        password = generate_password(DEFAULT_LENGTH)
-
-        self.assertTrue(is_valid_password(password))
-
-    def test_uses_only_allowed_characters(self) -> None:
-        password = generate_password(DEFAULT_LENGTH)
-
-        self.assertTrue(
-            all(character in ALPHABET for character in password)
-        )
 
 
 class TestGetPasswordLength(unittest.TestCase):
@@ -87,13 +50,233 @@ class TestGetPasswordLength(unittest.TestCase):
         with (
             patch(
                 "builtins.input",
-                side_effect=["abc", str(MIN_LENGTH - 1), "17"],
+                side_effect=[
+                    "abc",
+                    str(MIN_LENGTH - 1),
+                    "17",
+                ],
             ),
             patch("builtins.print"),
         ):
             self.assertEqual(
                 get_password_length(),
                 17,
+            )
+
+
+class TestGetYesNo(unittest.TestCase):
+    @patch("builtins.input", return_value="")
+    def test_empty_input_uses_default(
+        self,
+        _mock_input: MagicMock,
+    ) -> None:
+        self.assertTrue(
+            get_yes_no("Test?")
+        )
+
+    @patch("builtins.input", return_value="n")
+    def test_accepts_no(
+        self,
+        _mock_input: MagicMock,
+    ) -> None:
+        self.assertFalse(
+            get_yes_no("Test?")
+        )
+
+    def test_retries_invalid_input(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=["maybe", "yes"],
+            ),
+            patch("builtins.print"),
+        ):
+            self.assertTrue(
+                get_yes_no("Test?")
+            )
+
+
+class TestGetCharacterOptions(unittest.TestCase):
+    def test_defaults_to_all_enabled(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=["", "", "", ""],
+            ),
+            patch("builtins.print"),
+        ):
+            self.assertEqual(
+                get_character_options(),
+                (True, True, True, True),
+            )
+
+    def test_accepts_custom_options(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=["y", "n", "y", "n"],
+            ),
+            patch("builtins.print"),
+        ):
+            self.assertEqual(
+                get_character_options(),
+                (True, False, True, False),
+            )
+
+    def test_retries_when_all_are_disabled(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=[
+                    "n",
+                    "n",
+                    "n",
+                    "n",
+                    "",
+                    "",
+                    "",
+                    "",
+                ],
+            ),
+            patch("builtins.print"),
+        ):
+            self.assertEqual(
+                get_character_options(),
+                (True, True, True, True),
+            )
+
+
+class TestBuildAlphabet(unittest.TestCase):
+    def test_builds_selected_alphabet(self) -> None:
+        alphabet = build_alphabet(
+            True,
+            False,
+            True,
+            False,
+        )
+
+        self.assertEqual(
+            alphabet,
+            string.ascii_lowercase + string.digits,
+        )
+
+
+class TestIsValidPassword(unittest.TestCase):
+    def test_valid_password(self) -> None:
+        self.assertTrue(
+            is_valid_password("abcABC123!")
+        )
+
+    def test_missing_lowercase(self) -> None:
+        self.assertFalse(
+            is_valid_password("ABCXYZ123!")
+        )
+
+    def test_missing_uppercase(self) -> None:
+        self.assertFalse(
+            is_valid_password("abcxyz123!")
+        )
+
+    def test_missing_digits(self) -> None:
+        self.assertFalse(
+            is_valid_password("abcABCxyz!")
+        )
+
+    def test_fewer_than_three_digits(self) -> None:
+        self.assertFalse(
+            is_valid_password("abcABC12!")
+        )
+
+    def test_missing_symbol(self) -> None:
+        self.assertFalse(
+            is_valid_password("abcABC123")
+        )
+
+    def test_valid_with_only_lowercase_enabled(self) -> None:
+        self.assertTrue(
+            is_valid_password(
+                "abcdefghijklmno",
+                include_lowercase=True,
+                include_uppercase=False,
+                include_digits=False,
+                include_symbols=False,
+            )
+        )
+
+
+class TestGeneratePassword(unittest.TestCase):
+    def test_generates_requested_length(self) -> None:
+        for length in (
+            MIN_LENGTH,
+            DEFAULT_LENGTH,
+            32,
+        ):
+            with self.subTest(length=length):
+                password = generate_password(length)
+
+                self.assertEqual(
+                    len(password),
+                    length,
+                )
+
+    def test_generates_valid_password(self) -> None:
+        password = generate_password(DEFAULT_LENGTH)
+
+        self.assertTrue(
+            is_valid_password(password)
+        )
+
+    def test_uses_only_allowed_characters(self) -> None:
+        password = generate_password(DEFAULT_LENGTH)
+
+        self.assertTrue(
+            all(
+                character in ALPHABET
+                for character in password
+            )
+        )
+
+    def test_generates_lowercase_and_digits_only(
+        self,
+    ) -> None:
+        password = generate_password(
+            DEFAULT_LENGTH,
+            include_lowercase=True,
+            include_uppercase=False,
+            include_digits=True,
+            include_symbols=False,
+        )
+
+        allowed = (
+            string.ascii_lowercase
+            + string.digits
+        )
+
+        self.assertTrue(
+            all(
+                character in allowed
+                for character in password
+            )
+        )
+
+        self.assertTrue(
+            is_valid_password(
+                password,
+                include_lowercase=True,
+                include_uppercase=False,
+                include_digits=True,
+                include_symbols=False,
+            )
+        )
+
+    def test_rejects_no_character_types(self) -> None:
+        with self.assertRaises(ValueError):
+            generate_password(
+                DEFAULT_LENGTH,
+                False,
+                False,
+                False,
+                False,
             )
 
 
