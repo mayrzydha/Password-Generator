@@ -16,6 +16,7 @@ from main import (
     DEFAULT_PASSWORD_COUNT,
     MAX_PASSWORD_COUNT,
     get_password_count,
+    main,
 )
 
 
@@ -362,6 +363,64 @@ class TestGeneratePassword(unittest.TestCase):
                 for character in AMBIGUOUS_CHARACTERS
             )
         )
+
+
+class TestMain(unittest.TestCase):
+    def test_generates_single_password(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=["", "", "", "", "", "", ""],
+            ),
+            patch(
+                "main.generate_password",
+                return_value="TestPassword123!",
+            ) as mock_generate,
+            patch("builtins.print") as mock_print,
+        ):
+            main()
+
+        mock_generate.assert_called_once_with(
+            DEFAULT_LENGTH,
+            True,
+            True,
+            True,
+            True,
+            False,
+        )
+
+        mock_print.assert_any_call(
+            "\nPassword: TestPassword123!"
+        )
+
+    def test_generates_multiple_passwords(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=["", "3", "", "", "", "", ""],
+            ),
+            patch(
+                "main.generate_password",
+                side_effect=[
+                    "PasswordOne",
+                    "PasswordTwo",
+                    "PasswordThree",
+                ],
+            ) as mock_generate,
+            patch("builtins.print") as mock_print,
+        ):
+            main()
+
+        self.assertEqual(
+            mock_generate.call_count,
+            3,
+        )
+
+        mock_print.assert_any_call("\nPasswords:")
+        mock_print.assert_any_call("1. PasswordOne")
+        mock_print.assert_any_call("2. PasswordTwo")
+        mock_print.assert_any_call("3. PasswordThree")
+
 
 if __name__ == "__main__":
     unittest.main()
