@@ -124,11 +124,17 @@ class TestParseArguments(unittest.TestCase):
         self.assertEqual(args.length, 24)
         self.assertEqual(args.count, 3)
 
+    def test_accepts_exclude_ambiguous(self) -> None:
+        args = parse_arguments(["--exclude-ambiguous"])
+
+        self.assertTrue(args.exclude_ambiguous)
+
     def test_omitted_options_are_none(self) -> None:
         args = parse_arguments([])
 
         self.assertIsNone(args.length)
         self.assertIsNone(args.count)
+        self.assertFalse(args.exclude_ambiguous)
 
     def test_rejects_short_length(self) -> None:
         with (
@@ -461,6 +467,37 @@ class TestMain(unittest.TestCase):
             True,
             True,
             False,
+        )
+
+    def test_uses_command_line_exclude_ambiguous(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=["", "", "", "", ""],
+            ) as mock_input,
+            patch(
+                "main.generate_password",
+                return_value="TestPassword234!",
+            ) as mock_generate,
+            patch("builtins.print"),
+        ):
+            main(
+                [
+                    "--length",
+                    "24",
+                    "--exclude-ambiguous",
+                ]
+            )
+
+        self.assertEqual(mock_input.call_count, 5)
+
+        mock_generate.assert_called_once_with(
+            24,
+            True,
+            True,
+            True,
+            True,
+            True,
         )
 
 

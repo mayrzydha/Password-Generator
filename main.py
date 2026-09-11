@@ -30,6 +30,12 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         help=f"Number of passwords (1-{MAX_PASSWORD_COUNT}).",
     )
 
+    parser.add_argument(
+        "--exclude-ambiguous",
+        action="store_true",
+        help="Exclude ambiguous characters (0, O, 1, l, I).",
+    )
+
     args = parser.parse_args(argv)
 
     if args.length is not None and args.length < MIN_LENGTH:
@@ -225,9 +231,13 @@ def main(argv: list[str] | None = None) -> None:
         include_symbols,
     ) = get_character_options()
 
-    exclude_ambiguous = get_yes_no(
-        "Exclude ambiguous characters?",
-        default=False,
+    exclude_ambiguous = (
+        True
+        if args.exclude_ambiguous
+        else get_yes_no(
+            "Exclude ambiguous characters?",
+            default=False,
+        )
     )
 
     if password_count == 1:
