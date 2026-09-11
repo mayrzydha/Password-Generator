@@ -13,6 +13,9 @@ from main import (
     get_password_length,
     get_yes_no,
     is_valid_password,
+    DEFAULT_PASSWORD_COUNT,
+    MAX_PASSWORD_COUNT,
+    get_password_count,
 )
 
 
@@ -62,6 +65,46 @@ class TestGetPasswordLength(unittest.TestCase):
             self.assertEqual(
                 get_password_length(),
                 17,
+            )
+
+
+class TestGetPasswordCount(unittest.TestCase):
+    @patch("builtins.input", return_value="")
+    def test_empty_input_uses_default(
+        self,
+        _mock_input: MagicMock,
+    ) -> None:
+        self.assertEqual(
+            get_password_count(),
+            DEFAULT_PASSWORD_COUNT,
+        )
+
+    @patch("builtins.input", return_value="5")
+    def test_accepts_valid_count(
+        self,
+        _mock_input: MagicMock,
+    ) -> None:
+        self.assertEqual(
+            get_password_count(),
+            5,
+        )
+
+    def test_retries_until_count_is_valid(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=[
+                    "abc",
+                    "0",
+                    str(MAX_PASSWORD_COUNT + 1),
+                    "3",
+                ],
+            ),
+            patch("builtins.print"),
+        ):
+            self.assertEqual(
+                get_password_count(),
+                3,
             )
 
 
@@ -161,8 +204,17 @@ class TestGetCharacterOptions(unittest.TestCase):
 
 class TestBuildAlphabet(unittest.TestCase):
     def test_builds_selected_alphabet(self) -> None:
-        # isi test lama tetap seperti sekarang
-        ...
+        alphabet = build_alphabet(
+            True,
+            False,
+            True,
+            False,
+        )
+
+        self.assertEqual(
+            alphabet,
+            string.ascii_lowercase + string.digits,
+        )
 
     def test_excludes_ambiguous_characters(self) -> None:
         alphabet: str = build_alphabet(

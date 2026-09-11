@@ -23,6 +23,9 @@ A simple and secure password generator written in Python.
 - Includes automated tests using Python's `unittest`
 - No third-party packages are required
 - Option to exclude ambiguous characters (`0`, `O`, `1`, `l`, `I`)
+- Generate multiple passwords in a single run
+- Generates 1 password by default
+- Supports up to 100 passwords per run
 
 ## Requirements
 
@@ -52,6 +55,7 @@ Example:
 
 ```text
 Password length [20]: 24
+Number of passwords [1]: 3
 
 Character options:
 Include lowercase letters? [Y/n]:
@@ -60,7 +64,10 @@ Include digits? [Y/n]:
 Include symbols? [Y/n]:
 Exclude ambiguous characters? [y/N]: y
 
-Password: 8f]T2q!xL7@pK4nZ3#sW
+Passwords:
+1. ...
+2. ...
+3. ...
 ```
 
 Press Enter to use the default password length and enable a character type by default.

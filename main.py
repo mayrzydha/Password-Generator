@@ -6,6 +6,9 @@ MIN_LENGTH: int = 15
 MIN_DIGITS: int = 3
 AMBIGUOUS_CHARACTERS: str = "0O1lI"
 
+DEFAULT_PASSWORD_COUNT: int = 1
+MAX_PASSWORD_COUNT: int = 100
+
 ALPHABET: str = (
     string.ascii_letters
     + string.digits
@@ -36,6 +39,31 @@ def get_password_length() -> int:
             continue
 
         return password_length
+
+
+def get_password_count() -> int:
+    while True:
+        user_input = input(
+            f"Number of passwords [{DEFAULT_PASSWORD_COUNT}]: "
+        ).strip()
+
+        if user_input == "":
+            return DEFAULT_PASSWORD_COUNT
+
+        try:
+            password_count = int(user_input)
+        except ValueError:
+            print("Invalid input. Enter a whole number.")
+            continue
+
+        if not 1 <= password_count <= MAX_PASSWORD_COUNT:
+            print(
+                f"Number of passwords must be between "
+                f"1 and {MAX_PASSWORD_COUNT}."
+            )
+            continue
+
+        return password_count
 
 
 def get_yes_no(prompt: str, default: bool = True) -> bool:
@@ -205,6 +233,7 @@ def generate_password(
 
 def main() -> None:
     password_length = get_password_length()
+    password_count = get_password_count()
 
     (
         include_lowercase,
@@ -218,16 +247,32 @@ def main() -> None:
         default=False,
     )
 
-    password = generate_password(
-        password_length,
-        include_lowercase,
-        include_uppercase,
-        include_digits,
-        include_symbols,
-        exclude_ambiguous,
-    )
+    if password_count == 1:
+        password = generate_password(
+            password_length,
+            include_lowercase,
+            include_uppercase,
+            include_digits,
+            include_symbols,
+            exclude_ambiguous,
+        )
 
-    print(f"\nPassword: {password}")
+        print(f"\nPassword: {password}")
+
+    else:
+        print("\nPasswords:")
+
+        for index in range(1, password_count + 1):
+            password = generate_password(
+                password_length,
+                include_lowercase,
+                include_uppercase,
+                include_digits,
+                include_symbols,
+                exclude_ambiguous,
+            )
+
+            print(f"{index}. {password}")
 
 
 if __name__ == "__main__":
