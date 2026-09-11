@@ -1,3 +1,4 @@
+import argparse
 import secrets
 import string
 
@@ -10,6 +11,34 @@ DEFAULT_PASSWORD_COUNT: int = 1
 MAX_PASSWORD_COUNT: int = 100
 
 ALPHABET: str = string.ascii_letters + string.digits + string.punctuation
+
+
+def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate cryptographically secure passwords."
+    )
+
+    parser.add_argument(
+        "--length",
+        type=int,
+        help=f"Password length (minimum: {MIN_LENGTH}).",
+    )
+
+    parser.add_argument(
+        "--count",
+        type=int,
+        help=f"Number of passwords (1-{MAX_PASSWORD_COUNT}).",
+    )
+
+    args = parser.parse_args(argv)
+
+    if args.length is not None and args.length < MIN_LENGTH:
+        parser.error(f"--length must be at least {MIN_LENGTH}.")
+
+    if args.count is not None and not 1 <= args.count <= MAX_PASSWORD_COUNT:
+        parser.error(f"--count must be between 1 and {MAX_PASSWORD_COUNT}.")
+
+    return args
 
 
 def get_password_length() -> int:
@@ -182,9 +211,12 @@ def generate_password(
             return password
 
 
-def main() -> None:
-    password_length = get_password_length()
-    password_count = get_password_count()
+def main(argv: list[str] | None = None) -> None:
+    args = parse_arguments(argv)
+
+    password_length = args.length if args.length is not None else get_password_length()
+
+    password_count = args.count if args.count is not None else get_password_count()
 
     (
         include_lowercase,

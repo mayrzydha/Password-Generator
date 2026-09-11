@@ -17,6 +17,7 @@ from main import (
     get_yes_no,
     is_valid_password,
     main,
+    parse_arguments,
 )
 
 
@@ -106,6 +107,51 @@ class TestGetPasswordCount(unittest.TestCase):
             self.assertEqual(
                 get_password_count(),
                 3,
+            )
+
+
+class TestParseArguments(unittest.TestCase):
+    def test_accepts_length_and_count(self) -> None:
+        args = parse_arguments(
+            [
+                "--length",
+                "24",
+                "--count",
+                "3",
+            ]
+        )
+
+        self.assertEqual(args.length, 24)
+        self.assertEqual(args.count, 3)
+
+    def test_omitted_options_are_none(self) -> None:
+        args = parse_arguments([])
+
+        self.assertIsNone(args.length)
+        self.assertIsNone(args.count)
+
+    def test_rejects_short_length(self) -> None:
+        with (
+            patch("sys.stderr"),
+            self.assertRaises(SystemExit),
+        ):
+            parse_arguments(
+                [
+                    "--length",
+                    str(MIN_LENGTH - 1),
+                ]
+            )
+
+    def test_rejects_invalid_count(self) -> None:
+        with (
+            patch("sys.stderr"),
+            self.assertRaises(SystemExit),
+        ):
+            parse_arguments(
+                [
+                    "--count",
+                    str(MAX_PASSWORD_COUNT + 1),
+                ]
             )
 
 
@@ -340,7 +386,7 @@ class TestMain(unittest.TestCase):
             ) as mock_generate,
             patch("builtins.print") as mock_print,
         ):
-            main()
+            main([])
 
         mock_generate.assert_called_once_with(
             DEFAULT_LENGTH,
@@ -369,7 +415,7 @@ class TestMain(unittest.TestCase):
             ) as mock_generate,
             patch("builtins.print") as mock_print,
         ):
-            main()
+            main([])
 
         self.assertEqual(
             mock_generate.call_count,
@@ -380,6 +426,42 @@ class TestMain(unittest.TestCase):
         mock_print.assert_any_call("1. PasswordOne")
         mock_print.assert_any_call("2. PasswordTwo")
         mock_print.assert_any_call("3. PasswordThree")
+
+    def test_uses_command_line_length_and_count(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=["", "", "", "", ""],
+            ) as mock_input,
+            patch(
+                "main.generate_password",
+                side_effect=[
+                    "PasswordOne",
+                    "PasswordTwo",
+                ],
+            ) as mock_generate,
+            patch("builtins.print"),
+        ):
+            main(
+                [
+                    "--length",
+                    "24",
+                    "--count",
+                    "2",
+                ]
+            )
+
+        self.assertEqual(mock_input.call_count, 5)
+        self.assertEqual(mock_generate.call_count, 2)
+
+        mock_generate.assert_any_call(
+            24,
+            True,
+            True,
+            True,
+            True,
+            False,
+        )
 
 
 if __name__ == "__main__":
