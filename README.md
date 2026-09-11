@@ -29,7 +29,7 @@ A simple Python password generator using cryptographically secure randomness.
 
 ## Requirements
 
-- Python 3
+- Python 3.9+
 
 No third-party packages are required.
 
