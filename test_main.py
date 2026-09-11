@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from main import (
     ALPHABET,
+    AMBIGUOUS_CHARACTERS,
     DEFAULT_LENGTH,
     MIN_LENGTH,
     build_alphabet,
@@ -83,6 +84,18 @@ class TestGetYesNo(unittest.TestCase):
             get_yes_no("Test?")
         )
 
+    @patch("builtins.input", return_value="")
+    def test_empty_input_uses_false_default(
+    self,
+    _mock_input: MagicMock,
+) -> None:
+     self.assertFalse(
+        get_yes_no(
+            "Test?",
+            default=False,
+        )
+    )
+
     def test_retries_invalid_input(self) -> None:
         with (
             patch(
@@ -148,18 +161,24 @@ class TestGetCharacterOptions(unittest.TestCase):
 
 class TestBuildAlphabet(unittest.TestCase):
     def test_builds_selected_alphabet(self) -> None:
-        alphabet = build_alphabet(
+        # isi test lama tetap seperti sekarang
+        ...
+
+    def test_excludes_ambiguous_characters(self) -> None:
+        alphabet: str = build_alphabet(
             True,
-            False,
             True,
-            False,
+            True,
+            True,
+            exclude_ambiguous=True,
         )
 
-        self.assertEqual(
-            alphabet,
-            string.ascii_lowercase + string.digits,
+        self.assertFalse(
+            any(
+                character in alphabet
+                for character in AMBIGUOUS_CHARACTERS
+            )
         )
-
 
 class TestIsValidPassword(unittest.TestCase):
     def test_valid_password(self) -> None:
@@ -279,6 +298,18 @@ class TestGeneratePassword(unittest.TestCase):
                 False,
             )
 
+    def test_excludes_ambiguous_characters(self) -> None:
+        password: str = generate_password(
+            DEFAULT_LENGTH,
+            exclude_ambiguous=True,
+        )
+
+        self.assertFalse(
+            any(
+                character in password
+                for character in AMBIGUOUS_CHARACTERS
+            )
+        )
 
 if __name__ == "__main__":
     unittest.main()

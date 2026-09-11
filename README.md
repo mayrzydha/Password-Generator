@@ -22,6 +22,7 @@ A simple and secure password generator written in Python.
 - Validates user input
 - Includes automated tests using Python's `unittest`
 - No third-party packages are required
+- Option to exclude ambiguous characters (`0`, `O`, `1`, `l`, `I`)
 
 ## Requirements
 
@@ -57,6 +58,7 @@ Include lowercase letters? [Y/n]:
 Include uppercase letters? [Y/n]:
 Include digits? [Y/n]:
 Include symbols? [Y/n]:
+Exclude ambiguous characters? [y/N]: y
 
 Password: 8f]T2q!xL7@pK4nZ3#sW
 ```

@@ -4,6 +4,7 @@ import string
 DEFAULT_LENGTH: int = 20
 MIN_LENGTH: int = 15
 MIN_DIGITS: int = 3
+AMBIGUOUS_CHARACTERS: str = "0O1lI"
 
 ALPHABET: str = (
     string.ascii_letters
@@ -92,6 +93,7 @@ def build_alphabet(
     include_uppercase: bool,
     include_digits: bool,
     include_symbols: bool,
+    exclude_ambiguous: bool = False,
 ) -> str:
     alphabet = ""
 
@@ -106,6 +108,13 @@ def build_alphabet(
 
     if include_symbols:
         alphabet += string.punctuation
+
+    if exclude_ambiguous:
+        alphabet = "".join(
+            character
+            for character in alphabet
+            if character not in AMBIGUOUS_CHARACTERS
+        )
 
     return alphabet
 
@@ -150,12 +159,14 @@ def generate_password(
     include_uppercase: bool = True,
     include_digits: bool = True,
     include_symbols: bool = True,
+    exclude_ambiguous: bool = False,
 ) -> str:
     alphabet = build_alphabet(
         include_lowercase,
         include_uppercase,
         include_digits,
         include_symbols,
+        exclude_ambiguous,
     )
 
     if not alphabet:
@@ -202,12 +213,18 @@ def main() -> None:
         include_symbols,
     ) = get_character_options()
 
+    exclude_ambiguous = get_yes_no(
+        "Exclude ambiguous characters?",
+        default=False,
+    )
+
     password = generate_password(
         password_length,
         include_lowercase,
         include_uppercase,
         include_digits,
         include_symbols,
+        exclude_ambiguous,
     )
 
     print(f"\nPassword: {password}")
