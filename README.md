@@ -1,5 +1,7 @@
 # Password Generator
 
+[![Tests](https://github.com/mayrzydha/Password-Generator/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/mayrzydha/Password-Generator/actions/workflows/tests.yml)
+
 A simple and secure password generator written in Python.
 
 ## Features
