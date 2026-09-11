@@ -6,16 +6,16 @@ from main import (
     ALPHABET,
     AMBIGUOUS_CHARACTERS,
     DEFAULT_LENGTH,
+    DEFAULT_PASSWORD_COUNT,
+    MAX_PASSWORD_COUNT,
     MIN_LENGTH,
     build_alphabet,
     generate_password,
     get_character_options,
+    get_password_count,
     get_password_length,
     get_yes_no,
     is_valid_password,
-    DEFAULT_PASSWORD_COUNT,
-    MAX_PASSWORD_COUNT,
-    get_password_count,
     main,
 )
 
@@ -115,30 +115,26 @@ class TestGetYesNo(unittest.TestCase):
         self,
         _mock_input: MagicMock,
     ) -> None:
-        self.assertTrue(
-            get_yes_no("Test?")
-        )
+        self.assertTrue(get_yes_no("Test?"))
 
     @patch("builtins.input", return_value="n")
     def test_accepts_no(
         self,
         _mock_input: MagicMock,
     ) -> None:
-        self.assertFalse(
-            get_yes_no("Test?")
-        )
+        self.assertFalse(get_yes_no("Test?"))
 
     @patch("builtins.input", return_value="")
     def test_empty_input_uses_false_default(
-    self,
-    _mock_input: MagicMock,
-) -> None:
-     self.assertFalse(
-        get_yes_no(
-            "Test?",
-            default=False,
+        self,
+        _mock_input: MagicMock,
+    ) -> None:
+        self.assertFalse(
+            get_yes_no(
+                "Test?",
+                default=False,
+            )
         )
-    )
 
     def test_retries_invalid_input(self) -> None:
         with (
@@ -148,9 +144,7 @@ class TestGetYesNo(unittest.TestCase):
             ),
             patch("builtins.print"),
         ):
-            self.assertTrue(
-                get_yes_no("Test?")
-            )
+            self.assertTrue(get_yes_no("Test?"))
 
 
 class TestGetCharacterOptions(unittest.TestCase):
@@ -227,42 +221,28 @@ class TestBuildAlphabet(unittest.TestCase):
         )
 
         self.assertFalse(
-            any(
-                character in alphabet
-                for character in AMBIGUOUS_CHARACTERS
-            )
+            any(character in alphabet for character in AMBIGUOUS_CHARACTERS)
         )
+
 
 class TestIsValidPassword(unittest.TestCase):
     def test_valid_password(self) -> None:
-        self.assertTrue(
-            is_valid_password("abcABC123!")
-        )
+        self.assertTrue(is_valid_password("abcABC123!"))
 
     def test_missing_lowercase(self) -> None:
-        self.assertFalse(
-            is_valid_password("ABCXYZ123!")
-        )
+        self.assertFalse(is_valid_password("ABCXYZ123!"))
 
     def test_missing_uppercase(self) -> None:
-        self.assertFalse(
-            is_valid_password("abcxyz123!")
-        )
+        self.assertFalse(is_valid_password("abcxyz123!"))
 
     def test_missing_digits(self) -> None:
-        self.assertFalse(
-            is_valid_password("abcABCxyz!")
-        )
+        self.assertFalse(is_valid_password("abcABCxyz!"))
 
     def test_fewer_than_three_digits(self) -> None:
-        self.assertFalse(
-            is_valid_password("abcABC12!")
-        )
+        self.assertFalse(is_valid_password("abcABC12!"))
 
     def test_missing_symbol(self) -> None:
-        self.assertFalse(
-            is_valid_password("abcABC123")
-        )
+        self.assertFalse(is_valid_password("abcABC123"))
 
     def test_valid_with_only_lowercase_enabled(self) -> None:
         self.assertTrue(
@@ -294,19 +274,12 @@ class TestGeneratePassword(unittest.TestCase):
     def test_generates_valid_password(self) -> None:
         password = generate_password(DEFAULT_LENGTH)
 
-        self.assertTrue(
-            is_valid_password(password)
-        )
+        self.assertTrue(is_valid_password(password))
 
     def test_uses_only_allowed_characters(self) -> None:
         password = generate_password(DEFAULT_LENGTH)
 
-        self.assertTrue(
-            all(
-                character in ALPHABET
-                for character in password
-            )
-        )
+        self.assertTrue(all(character in ALPHABET for character in password))
 
     def test_generates_lowercase_and_digits_only(
         self,
@@ -319,17 +292,9 @@ class TestGeneratePassword(unittest.TestCase):
             include_symbols=False,
         )
 
-        allowed = (
-            string.ascii_lowercase
-            + string.digits
-        )
+        allowed = string.ascii_lowercase + string.digits
 
-        self.assertTrue(
-            all(
-                character in allowed
-                for character in password
-            )
-        )
+        self.assertTrue(all(character in allowed for character in password))
 
         self.assertTrue(
             is_valid_password(
@@ -358,10 +323,7 @@ class TestGeneratePassword(unittest.TestCase):
         )
 
         self.assertFalse(
-            any(
-                character in password
-                for character in AMBIGUOUS_CHARACTERS
-            )
+            any(character in password for character in AMBIGUOUS_CHARACTERS)
         )
 
 
@@ -389,9 +351,7 @@ class TestMain(unittest.TestCase):
             False,
         )
 
-        mock_print.assert_any_call(
-            "\nPassword: TestPassword123!"
-        )
+        mock_print.assert_any_call("\nPassword: TestPassword123!")
 
     def test_generates_multiple_passwords(self) -> None:
         with (

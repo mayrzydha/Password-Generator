@@ -9,18 +9,12 @@ AMBIGUOUS_CHARACTERS: str = "0O1lI"
 DEFAULT_PASSWORD_COUNT: int = 1
 MAX_PASSWORD_COUNT: int = 100
 
-ALPHABET: str = (
-    string.ascii_letters
-    + string.digits
-    + string.punctuation
-)
+ALPHABET: str = string.ascii_letters + string.digits + string.punctuation
 
 
 def get_password_length() -> int:
     while True:
-        user_input: str = input(
-            f"Password length [{DEFAULT_LENGTH}]: "
-        ).strip()
+        user_input: str = input(f"Password length [{DEFAULT_LENGTH}]: ").strip()
 
         if user_input == "":
             return DEFAULT_LENGTH
@@ -32,10 +26,7 @@ def get_password_length() -> int:
             continue
 
         if password_length < MIN_LENGTH:
-            print(
-                f"Password must be at least "
-                f"{MIN_LENGTH} characters."
-            )
+            print(f"Password must be at least {MIN_LENGTH} characters.")
             continue
 
         return password_length
@@ -43,9 +34,7 @@ def get_password_length() -> int:
 
 def get_password_count() -> int:
     while True:
-        user_input = input(
-            f"Number of passwords [{DEFAULT_PASSWORD_COUNT}]: "
-        ).strip()
+        user_input = input(f"Number of passwords [{DEFAULT_PASSWORD_COUNT}]: ").strip()
 
         if user_input == "":
             return DEFAULT_PASSWORD_COUNT
@@ -57,10 +46,7 @@ def get_password_count() -> int:
             continue
 
         if not 1 <= password_count <= MAX_PASSWORD_COUNT:
-            print(
-                f"Number of passwords must be between "
-                f"1 and {MAX_PASSWORD_COUNT}."
-            )
+            print(f"Number of passwords must be between 1 and {MAX_PASSWORD_COUNT}.")
             continue
 
         return password_count
@@ -88,18 +74,10 @@ def get_character_options() -> tuple[bool, bool, bool, bool]:
     while True:
         print("\nCharacter options:")
 
-        include_lowercase = get_yes_no(
-            "Include lowercase letters?"
-        )
-        include_uppercase = get_yes_no(
-            "Include uppercase letters?"
-        )
-        include_digits = get_yes_no(
-            "Include digits?"
-        )
-        include_symbols = get_yes_no(
-            "Include symbols?"
-        )
+        include_lowercase = get_yes_no("Include lowercase letters?")
+        include_uppercase = get_yes_no("Include uppercase letters?")
+        include_digits = get_yes_no("Include digits?")
+        include_symbols = get_yes_no("Include symbols?")
 
         options = (
             include_lowercase,
@@ -111,9 +89,7 @@ def get_character_options() -> tuple[bool, bool, bool, bool]:
         if any(options):
             return options
 
-        print(
-            "At least one character type must be enabled."
-        )
+        print("At least one character type must be enabled.")
 
 
 def build_alphabet(
@@ -139,9 +115,7 @@ def build_alphabet(
 
     if exclude_ambiguous:
         alphabet = "".join(
-            character
-            for character in alphabet
-            if character not in AMBIGUOUS_CHARACTERS
+            character for character in alphabet if character not in AMBIGUOUS_CHARACTERS
         )
 
     return alphabet
@@ -154,31 +128,16 @@ def is_valid_password(
     include_digits: bool = True,
     include_symbols: bool = True,
 ) -> bool:
-    if (
-        include_lowercase
-        and not any(c.islower() for c in password)
-    ):
+    if include_lowercase and not any(c.islower() for c in password):
         return False
 
-    if (
-        include_uppercase
-        and not any(c.isupper() for c in password)
-    ):
+    if include_uppercase and not any(c.isupper() for c in password):
         return False
 
-    if (
-        include_digits
-        and sum(c.isdigit() for c in password) < MIN_DIGITS
-    ):
+    if include_digits and sum(c.isdigit() for c in password) < MIN_DIGITS:
         return False
 
-    if (
-        include_symbols
-        and not any(c in string.punctuation for c in password)
-    ):
-        return False
-
-    return True
+    return not include_symbols or any(c in string.punctuation for c in password)
 
 
 def generate_password(
@@ -198,9 +157,7 @@ def generate_password(
     )
 
     if not alphabet:
-        raise ValueError(
-            "At least one character type must be enabled."
-        )
+        raise ValueError("At least one character type must be enabled.")
 
     required_length = (
         int(include_lowercase)
@@ -210,16 +167,10 @@ def generate_password(
     )
 
     if length < required_length:
-        raise ValueError(
-            "Password length is too short "
-            "for the selected requirements."
-        )
+        raise ValueError("Password length is too short for the selected requirements.")
 
     while True:
-        password = "".join(
-            secrets.choice(alphabet)
-            for _ in range(length)
-        )
+        password = "".join(secrets.choice(alphabet) for _ in range(length))
 
         if is_valid_password(
             password,
