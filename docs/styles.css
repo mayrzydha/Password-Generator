@@ -1,0 +1,384 @@
+:root {
+  color-scheme: dark;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  --background: #0b0d10;
+  --surface: #13171c;
+  --surface-hover: #191e24;
+  --border: #2a3038;
+  --text: #f5f7fa;
+  --muted: #9aa4b2;
+  --accent: #7c9cff;
+  --accent-hover: #96afff;
+  --danger: #ff7b7b;
+  --success: #76d39b;
+  --radius: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top, rgba(124, 156, 255, 0.08), transparent 35%),
+    var(--background);
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+.page-shell {
+  width: min(760px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 72px 0 40px;
+}
+
+.hero {
+  margin-bottom: 40px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  line-height: 1.1;
+}
+
+h1 {
+  max-width: 760px;
+  font-size: clamp(3.5rem, 9vw, 5.5rem);
+  letter-spacing: -0.05em;
+}
+
+h2 {
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+}
+
+.intro {
+  max-width: 620px;
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.generator-card,
+.results-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(19, 23, 28, 0.92);
+  padding: 28px;
+}
+
+.results-card {
+  margin-top: 20px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.local-badge {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 11px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.field input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  background: var(--background);
+  color: var(--text);
+  padding: 12px 14px;
+}
+
+.field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 156, 255, 0.14);
+}
+
+.field small {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+fieldset {
+  margin: 28px 0 0;
+  border: 0;
+  padding: 0;
+}
+
+legend {
+  margin-bottom: 14px;
+  padding: 0;
+  font-weight: 700;
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.check-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  padding: 11px 13px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.check-option:hover {
+  border-color: #3b4552;
+  background: var(--surface-hover);
+}
+
+.check-option input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.wide-option {
+  grid-column: 1 / -1;
+}
+
+code {
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+.error-message {
+  min-height: 22px;
+  margin: 18px 0 8px;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.primary-button,
+.secondary-button,
+.copy-button {
+  border-radius: 10px;
+  font-weight: 700;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.primary-button {
+  width: 100%;
+  border: 0;
+  background: var(--accent);
+  color: #0b1020;
+  padding: 13px 18px;
+}
+
+.primary-button:hover {
+  background: var(--accent-hover);
+}
+
+.primary-button:active,
+.secondary-button:active,
+.copy-button:active {
+  transform: translateY(1px);
+}
+
+.secondary-button,
+.copy-button {
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--text);
+}
+
+.secondary-button {
+  padding: 9px 13px;
+}
+
+.secondary-button:hover,
+.copy-button:hover {
+  border-color: #3b4552;
+  background: var(--surface-hover);
+}
+
+.password-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.password-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  padding: 10px;
+}
+
+.password-value {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.copy-button {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+}
+
+.status-message {
+  min-height: 20px;
+  margin: 14px 0 0;
+  color: var(--success);
+  font-size: 0.88rem;
+}
+
+.security-note {
+  margin-top: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  padding: 18px 20px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.security-note strong {
+  color: var(--text);
+}
+
+footer {
+  margin-top: 28px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+footer a {
+  text-underline-offset: 3px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .page-shell {
+    width: min(100% - 24px, 760px);
+    padding-top: 44px;
+  }
+
+  .generator-card,
+  .results-card {
+    padding: 20px;
+  }
+
+  .field-grid,
+  .option-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wide-option {
+    grid-column: auto;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+  }
+
+  .results-heading {
+    flex-direction: column;
+  }
+
+  .results-heading .secondary-button {
+    width: 100%;
+  }
+
+  .password-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .copy-button {
+    width: 100%;
+  }
+}
+
+.primary-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
