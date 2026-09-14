@@ -125,7 +125,7 @@ python main.py --defaults
 
 The `--defaults` option uses default values for any unspecified settings and skips interactive prompts. Explicit command-line options still override their corresponding defaults.
 
-Example: generate three passwords with default settings in raw output mode:
+Example: generate a password with default settings in raw output mode:
 
 ```bash
 python main.py --defaults --raw
