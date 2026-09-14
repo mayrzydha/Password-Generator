@@ -164,12 +164,12 @@ class TestParseArguments(unittest.TestCase):
         self.assertIsNone(args.length)
         self.assertIsNone(args.count)
         self.assertFalse(args.exclude_ambiguous)
-
         self.assertFalse(args.no_lowercase)
         self.assertFalse(args.no_uppercase)
         self.assertFalse(args.no_digits)
         self.assertFalse(args.no_symbols)
         self.assertFalse(args.raw)
+        self.assertFalse(args.defaults)
 
     def test_rejects_short_length(self) -> None:
         with (
@@ -209,6 +209,11 @@ class TestParseArguments(unittest.TestCase):
         args = parse_arguments(["--raw"])
 
         self.assertTrue(args.raw)
+
+    def test_accepts_defaults(self) -> None:
+        args = parse_arguments(["--defaults"])
+
+        self.assertTrue(args.defaults)
 
 
 class TestGetYesNo(unittest.TestCase):
@@ -612,6 +617,33 @@ class TestMain(unittest.TestCase):
         self.assertEqual(mock_print.call_count, 2)
         mock_print.assert_any_call("PasswordOne")
         mock_print.assert_any_call("PasswordTwo")
+
+    def test_defaults_uses_defaults_without_prompting(self) -> None:
+        with (
+            patch(
+                "builtins.input",
+                side_effect=AssertionError("input() must not be called"),
+            ) as mock_input,
+            patch(
+                "main.generate_password",
+                return_value="TestPassword123!",
+            ) as mock_generate,
+            patch("builtins.print") as mock_print,
+        ):
+            main(["--defaults"])
+
+        mock_input.assert_not_called()
+
+        mock_generate.assert_called_once_with(
+            DEFAULT_LENGTH,
+            True,
+            True,
+            True,
+            True,
+            False,
+        )
+
+        mock_print.assert_any_call("\nPassword: TestPassword123!")
 
 
 if __name__ == "__main__":

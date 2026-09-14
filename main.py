@@ -74,6 +74,12 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         help="Print passwords only, one per line.",
     )
 
+    parser.add_argument(
+        "--defaults",
+        action="store_true",
+        help="Use default values for unspecified options without prompting.",
+    )
+
     args = parser.parse_args(argv)
 
     if args.length is not None and args.length < MIN_LENGTH:
@@ -268,9 +274,19 @@ def generate_password(
 def main(argv: list[str] | None = None) -> None:
     args = parse_arguments(argv)
 
-    password_length = args.length if args.length is not None else get_password_length()
+    if args.length is not None:
+        password_length = args.length
+    elif args.defaults:
+        password_length = DEFAULT_LENGTH
+    else:
+        password_length = get_password_length()
 
-    password_count = args.count if args.count is not None else get_password_count()
+    if args.count is not None:
+        password_count = args.count
+    elif args.defaults:
+        password_count = DEFAULT_PASSWORD_COUNT
+    else:
+        password_count = get_password_count()
 
     character_options_from_cli = any(
         (
@@ -286,6 +302,11 @@ def main(argv: list[str] | None = None) -> None:
         include_uppercase = not args.no_uppercase
         include_digits = not args.no_digits
         include_symbols = not args.no_symbols
+    elif args.defaults:
+        include_lowercase = True
+        include_uppercase = True
+        include_digits = True
+        include_symbols = True
     else:
         (
             include_lowercase,
@@ -294,14 +315,15 @@ def main(argv: list[str] | None = None) -> None:
             include_symbols,
         ) = get_character_options()
 
-    exclude_ambiguous = (
-        True
-        if args.exclude_ambiguous
-        else get_yes_no(
+    if args.exclude_ambiguous:
+        exclude_ambiguous = True
+    elif args.defaults:
+        exclude_ambiguous = False
+    else:
+        exclude_ambiguous = get_yes_no(
             "Exclude ambiguous characters?",
             default=False,
         )
-    )
 
     if password_count == 1:
         password = generate_password(
