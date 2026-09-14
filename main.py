@@ -2,7 +2,7 @@ import argparse
 import secrets
 import string
 
-VERSION: str = "0.3.0"
+VERSION: str = "0.4.0"
 
 DEFAULT_LENGTH: int = 20
 MIN_LENGTH: int = 15
