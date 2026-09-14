@@ -1,5 +1,6 @@
 import string
 import unittest
+from io import StringIO
 from unittest.mock import MagicMock, patch
 
 from main import (
@@ -9,6 +10,7 @@ from main import (
     DEFAULT_PASSWORD_COUNT,
     MAX_PASSWORD_COUNT,
     MIN_LENGTH,
+    VERSION,
     build_alphabet,
     generate_password,
     get_character_options,
@@ -191,6 +193,16 @@ class TestParseArguments(unittest.TestCase):
                     str(MAX_PASSWORD_COUNT + 1),
                 ]
             )
+
+    def test_version_exits_successfully(self) -> None:
+        with (
+            patch("sys.stdout", new_callable=StringIO) as mock_stdout,
+            self.assertRaises(SystemExit) as context,
+        ):
+            parse_arguments(["--version"])
+
+        self.assertEqual(context.exception.code, 0)
+        self.assertIn(VERSION, mock_stdout.getvalue())
 
 
 class TestGetYesNo(unittest.TestCase):

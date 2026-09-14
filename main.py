@@ -2,6 +2,8 @@ import argparse
 import secrets
 import string
 
+VERSION: str = "0.3.0"
+
 DEFAULT_LENGTH: int = 20
 MIN_LENGTH: int = 15
 MIN_DIGITS: int = 3
@@ -58,6 +60,12 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         "--no-symbols",
         action="store_true",
         help="Exclude symbols.",
+    )
+
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {VERSION}",
     )
 
     args = parser.parse_args(argv)
