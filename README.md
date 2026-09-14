@@ -2,7 +2,15 @@
 
 [![Tests](https://github.com/mayrzydha/Password-Generator/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/mayrzydha/Password-Generator/actions/workflows/tests.yml)
 
-A simple Python password generator using cryptographically secure randomness.
+A cryptographically secure password generator with a Python CLI and browser-based GUI.
+
+## Web App
+
+Use the browser version:
+
+[Open Password Generator](https://mayrzydha.github.io/Password-Generator/)
+
+The web GUI runs the same Python password generator locally in the browser through Pyodide. Generated passwords are not sent to a server.
 
 ## Features
 
@@ -21,7 +29,7 @@ A simple Python password generator using cryptographically secure randomness.
 - Requires at least 3 digits when digits are enabled
 - Validates user input
 - Includes automated tests using Python's `unittest`
-- No third-party packages are required
+- No third-party packages are required for the CLI
 - Option to exclude ambiguous characters (`0`, `O`, `1`, `l`, `I`)
 - Generate multiple passwords in a single run
 - Generates 1 password by default
@@ -30,12 +38,21 @@ A simple Python password generator using cryptographically secure randomness.
 - Supports raw password output for scripting and pipelines
 - Supports non-interactive generation with default values using `--defaults`
 - Displays the current program version with `--version`
+- Includes a browser-based GUI deployed with GitHub Pages
+- Runs the same Python generator in the browser through Pyodide
+- Supports copying individual passwords or all generated passwords from the web GUI
 
 ## Requirements
+
+### CLI
 
 - Python 3.14
 
 No third-party packages are required.
+
+### Web App
+
+- A modern browser with JavaScript and WebAssembly support
 
 ## Usage
 
