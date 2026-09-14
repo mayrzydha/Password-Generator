@@ -28,6 +28,7 @@ A simple Python password generator using cryptographically secure randomness.
 - Supports up to 100 passwords per run
 - Supports command-line arguments alongside interactive prompts
 - Supports raw password output for scripting and pipelines
+- Supports non-interactive generation with default values using `--defaults`
 - Displays the current program version with `--version`
 
 ## Requirements
@@ -94,6 +95,7 @@ Available options:
 - `--no-symbols` — Exclude symbols.
 - `--version` — Show the program version and exit.
 - `--raw` — Print passwords only, one per line.
+- `--defaults` — Use default values for unspecified options without prompting.
 
 Example: generate three 24-character passwords:
 
@@ -114,6 +116,20 @@ python main.py --length 24 --count 3 --raw --no-uppercase --no-symbols --exclude
 ```
 
 Raw output prints only the generated passwords, one per line, without headings or numbering. This is useful when piping the output to another command or script.
+
+Example: generate a password using all default values without interactive prompts:
+
+```bash
+python main.py --defaults
+```
+
+The `--defaults` option uses default values for any unspecified settings and skips interactive prompts. Explicit command-line options still override their corresponding defaults.
+
+Example: generate three passwords with default settings in raw output mode:
+
+```bash
+python main.py --defaults --raw
+```
 
 View the current program version:
 
