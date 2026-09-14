@@ -68,6 +68,12 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         version=f"%(prog)s {VERSION}",
     )
 
+    parser.add_argument(
+        "--raw",
+        action="store_true",
+        help="Print passwords only, one per line.",
+    )
+
     args = parser.parse_args(argv)
 
     if args.length is not None and args.length < MIN_LENGTH:
@@ -307,10 +313,14 @@ def main(argv: list[str] | None = None) -> None:
             exclude_ambiguous,
         )
 
-        print(f"\nPassword: {password}")
+        if args.raw:
+            print(password)
+        else:
+            print(f"\nPassword: {password}")
 
     else:
-        print("\nPasswords:")
+        if not args.raw:
+            print("\nPasswords:")
 
         for index in range(1, password_count + 1):
             password = generate_password(
@@ -322,7 +332,10 @@ def main(argv: list[str] | None = None) -> None:
                 exclude_ambiguous,
             )
 
-            print(f"{index}. {password}")
+            if args.raw:
+                print(password)
+            else:
+                print(f"{index}. {password}")
 
 
 if __name__ == "__main__":

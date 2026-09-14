@@ -169,6 +169,7 @@ class TestParseArguments(unittest.TestCase):
         self.assertFalse(args.no_uppercase)
         self.assertFalse(args.no_digits)
         self.assertFalse(args.no_symbols)
+        self.assertFalse(args.raw)
 
     def test_rejects_short_length(self) -> None:
         with (
@@ -203,6 +204,11 @@ class TestParseArguments(unittest.TestCase):
 
         self.assertEqual(context.exception.code, 0)
         self.assertIn(VERSION, mock_stdout.getvalue())
+
+    def test_accepts_raw_output(self) -> None:
+        args = parse_arguments(["--raw"])
+
+        self.assertTrue(args.raw)
 
 
 class TestGetYesNo(unittest.TestCase):
@@ -575,6 +581,37 @@ class TestMain(unittest.TestCase):
             False,
             True,
         )
+
+    def test_uses_raw_output(self) -> None:
+        with (
+            patch("builtins.input") as mock_input,
+            patch(
+                "main.generate_password",
+                side_effect=[
+                    "PasswordOne",
+                    "PasswordTwo",
+                ],
+            ),
+            patch("builtins.print") as mock_print,
+        ):
+            main(
+                [
+                    "--length",
+                    "24",
+                    "--count",
+                    "2",
+                    "--raw",
+                    "--no-uppercase",
+                    "--no-symbols",
+                    "--exclude-ambiguous",
+                ]
+            )
+
+        mock_input.assert_not_called()
+
+        self.assertEqual(mock_print.call_count, 2)
+        mock_print.assert_any_call("PasswordOne")
+        mock_print.assert_any_call("PasswordTwo")
 
 
 if __name__ == "__main__":
