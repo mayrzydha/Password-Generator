@@ -115,3 +115,57 @@ test("rejects a password count above the maximum", async ({ page }) => {
 
   await expect(page.locator(".password-value")).toHaveCount(0);
 });
+
+test("copies an individual password", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], {
+    origin: "http://127.0.0.1:8000",
+  });
+
+  await page.goto("/docs/");
+
+  const generateButton = page.locator("#generate-button");
+
+  await expect(generateButton).toBeEnabled();
+  await generateButton.click();
+
+  const password = await page.locator(".password-value").first().textContent();
+
+  await page.locator(".copy-button").first().click();
+
+  await expect(page.locator("#copy-status")).toHaveText("Password 1 copied.");
+
+  const clipboardText = await page.evaluate(() =>
+    navigator.clipboard.readText(),
+  );
+
+  expect(clipboardText).toBe(password);
+});
+
+test("copies all generated passwords", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], {
+    origin: "http://127.0.0.1:8000",
+  });
+
+  await page.goto("/docs/");
+
+  const generateButton = page.locator("#generate-button");
+
+  await expect(generateButton).toBeEnabled();
+
+  await page.locator("#count").fill("3");
+  await generateButton.click();
+
+  const passwords = await page.locator(".password-value").allTextContents();
+
+  await page.locator("#copy-all").click();
+
+  await expect(page.locator("#copy-status")).toHaveText(
+    "All passwords copied.",
+  );
+
+  const clipboardText = await page.evaluate(() =>
+    navigator.clipboard.readText(),
+  );
+
+  expect(clipboardText.split(/\r?\n/)).toEqual(passwords);
+});
