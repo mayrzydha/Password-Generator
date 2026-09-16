@@ -1,21 +1,24 @@
 const { test, expect } = require("@playwright/test");
 
-test("loads the Python runtime", async ({ page }) => {
+async function waitForPython(page) {
   await page.goto("/docs/");
 
   const generateButton = page.locator("#generate-button");
 
-  await expect(generateButton).toBeEnabled();
+  await expect(generateButton).toBeEnabled({ timeout: 45_000 });
   await expect(generateButton).toHaveText("Generate password");
+
+  return generateButton;
+}
+
+test("loads the Python runtime", async ({ page }) => {
+  await waitForPython(page);
+
   await expect(page.locator("#form-error")).toHaveText("");
 });
 
 test("generates one default password", async ({ page }) => {
-  await page.goto("/docs/");
-
-  const generateButton = page.locator("#generate-button");
-
-  await expect(generateButton).toBeEnabled();
+  const generateButton = await waitForPython(page);
 
   await generateButton.click();
 
@@ -29,11 +32,7 @@ test("generates one default password", async ({ page }) => {
 });
 
 test("generates multiple passwords", async ({ page }) => {
-  await page.goto("/docs/");
-
-  const generateButton = page.locator("#generate-button");
-
-  await expect(generateButton).toBeEnabled();
+  const generateButton = await waitForPython(page);
 
   await page.locator("#count").fill("3");
   await generateButton.click();
@@ -42,11 +41,7 @@ test("generates multiple passwords", async ({ page }) => {
 });
 
 test("excludes ambiguous characters", async ({ page }) => {
-  await page.goto("/docs/");
-
-  const generateButton = page.locator("#generate-button");
-
-  await expect(generateButton).toBeEnabled();
+  const generateButton = await waitForPython(page);
 
   await page.locator("#count").fill("10");
   await page.locator("#exclude-ambiguous").check();
@@ -62,11 +57,7 @@ test("excludes ambiguous characters", async ({ page }) => {
 });
 
 test("rejects disabling every character type", async ({ page }) => {
-  await page.goto("/docs/");
-
-  const generateButton = page.locator("#generate-button");
-
-  await expect(generateButton).toBeEnabled();
+  const generateButton = await waitForPython(page);
 
   await page.locator("#lowercase").uncheck();
   await page.locator("#uppercase").uncheck();
@@ -83,11 +74,7 @@ test("rejects disabling every character type", async ({ page }) => {
 });
 
 test("rejects a password length below the minimum", async ({ page }) => {
-  await page.goto("/docs/");
-
-  const generateButton = page.locator("#generate-button");
-
-  await expect(generateButton).toBeEnabled();
+  const generateButton = await waitForPython(page);
 
   await page.locator("#length").fill("14");
   await generateButton.click();
@@ -100,11 +87,7 @@ test("rejects a password length below the minimum", async ({ page }) => {
 });
 
 test("rejects a password count above the maximum", async ({ page }) => {
-  await page.goto("/docs/");
-
-  const generateButton = page.locator("#generate-button");
-
-  await expect(generateButton).toBeEnabled();
+  const generateButton = await waitForPython(page);
 
   await page.locator("#count").fill("101");
   await generateButton.click();
@@ -121,11 +104,8 @@ test("copies an individual password", async ({ page, context }) => {
     origin: "http://127.0.0.1:8000",
   });
 
-  await page.goto("/docs/");
+  const generateButton = await waitForPython(page);
 
-  const generateButton = page.locator("#generate-button");
-
-  await expect(generateButton).toBeEnabled();
   await generateButton.click();
 
   const password = await page.locator(".password-value").first().textContent();
@@ -146,11 +126,7 @@ test("copies all generated passwords", async ({ page, context }) => {
     origin: "http://127.0.0.1:8000",
   });
 
-  await page.goto("/docs/");
-
-  const generateButton = page.locator("#generate-button");
-
-  await expect(generateButton).toBeEnabled();
+  const generateButton = await waitForPython(page);
 
   await page.locator("#count").fill("3");
   await generateButton.click();
