@@ -6,12 +6,8 @@ Security fixes are currently provided for the latest release.
 
 | Version | Supported |
 | ------- | --------- |
-| 1.0.x   | Yes       |
-| 0.5.x   | No        |
-| 0.4.x   | No        |
-| 0.3.x   | No        |
-| 0.2.x   | No        |
-| 0.1.x   | No        |
+| Latest  |    Yes    |
+
 
 ## Reporting a Vulnerability
 
