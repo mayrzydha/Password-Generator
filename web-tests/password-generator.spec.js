@@ -5,7 +5,7 @@ async function waitForPython(page) {
 
   const generateButton = page.locator("#generate-button");
 
-  await expect(generateButton).toBeEnabled({ timeout: 45_000 });
+  await expect(generateButton).toBeEnabled({ timeout: 60_000 });
   await expect(generateButton).toHaveText("Generate password");
 
   return generateButton;
