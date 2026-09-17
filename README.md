@@ -63,11 +63,13 @@ git clone https://github.com/mayrzydha/Password-Generator.git
 ```
 
 Move into the project directory:
+
 ```bash
 cd Password-Generator
 ```
 
 Run the program:
+
 ```bash
 python main.py
 ```
@@ -160,13 +162,41 @@ At least one character type must remain enabled.
 
 ## Testing
 
-Run the automated test suite with:
+### Python Tests
+
+Run the Python test suite with:
 
 ```bash
 python -m unittest -v
 ```
 
-The tests cover password generation, validation, configurable character types, password length and count handling, command-line arguments, and invalid user input.
+The Python tests cover password generation, validation, configurable character types, password length and count handling, command-line arguments, and invalid user input.
+
+### Web Tests
+
+The browser-based GUI is tested with Playwright.
+
+Install the development dependencies:
+
+```bash
+npm install
+```
+
+Install Chromium for Playwright:
+
+```bash
+npx playwright install chromium
+```
+
+Run the web test suite:
+
+```bash
+npm run test:web
+```
+
+The web tests cover Python runtime loading, password generation, input validation, ambiguous-character exclusion, multiple-password generation, and clipboard actions.
+
+When web tests fail in GitHub Actions, Playwright traces and screenshots are retained as workflow artifacts for debugging.
 
 ## Security
 
